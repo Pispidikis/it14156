@@ -8,6 +8,7 @@ const Header = () => {
     const [owner, setOwner] = useState("");
     const [contractBalance, setContractBalance] = useState("0");
     const [fees, setFees] = useState("0");
+    const [userBalance, setUserBalance] = useState("0"); // 🔄 ΝΕΟ: Balance χρήστη στο Metamask
 
     useEffect(() => {
         const fetchData = async () => {
@@ -18,17 +19,43 @@ const Header = () => {
                 const contractOwner = await contract.methods.owner().call();
                 setOwner(contractOwner);
 
-                const balance = await web3.eth.getBalance(contract.options.address);
-                setContractBalance(web3.utils.fromWei(balance, "ether"));
+                // 🔄 Υπόλοιπο συμβολαίου
+                const contractAddress = contract.options.address;
+                const contractBal = await web3.eth.getBalance(contractAddress);
+                setContractBalance(web3.utils.fromWei(contractBal, "ether"));
 
+                // 🔄 Fees που έχουν συλλεχθεί
                 const collectedFees = await contract.methods.feesCollected().call();
                 setFees(web3.utils.fromWei(collectedFees, "ether"));
+
+                // 🔄 Υπόλοιπο χρήστη στο Metamask
+                const userBal = await web3.eth.getBalance(accounts[0]);
+                setUserBalance(web3.utils.fromWei(userBal, "ether"));
+
             } catch (error) {
                 console.error("Error fetching header data:", error);
             }
         };
 
         fetchData();
+
+        // 🔄 Live ενημέρωση αν αλλάξει κάτι στο contract
+        const eventListener = contract.events.allEvents({}, async (error, event) => {
+            if (error) {
+                console.error("Error listening to contract events:", error);
+                return;
+            }
+            console.log("🔄 Event detected in Header:", event);
+
+            // Κάθε φορά που γίνεται μια συναλλαγή, ανανεώνουμε τα δεδομένα
+            fetchData();
+        });
+
+        // 🚀 Cleanup function για να μη δημιουργούμε πολλαπλούς listeners
+        return () => {
+            eventListener.unsubscribe();
+        };
+
     }, []);
 
     return (
@@ -57,7 +84,7 @@ const Header = () => {
                 </Grid>
                 <Grid item xs={6}>
                     <TextField
-                        label="Balance"
+                        label="Contract Balance"
                         variant="outlined"
                         fullWidth
                         value={`${contractBalance} ETH`}
@@ -70,6 +97,15 @@ const Header = () => {
                         variant="outlined"
                         fullWidth
                         value={`${fees} ETH`}
+                        InputProps={{ readOnly: true }}
+                    />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField
+                        label="Your Wallet Balance"
+                        variant="outlined"
+                        fullWidth
+                        value={`${userBalance} ETH`}
                         InputProps={{ readOnly: true }}
                     />
                 </Grid>

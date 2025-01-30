@@ -15,6 +15,8 @@ const FulfilledCampaigns = () => {
 
                 for (let i = 1; i <= campaignCount; i++) {
                     const campaign = await contract.methods.campaigns(i).call();
+                    console.log(`Checking Campaign ${i}:`, campaign);
+
                     if (campaign.completed) {
                         fetchedCampaigns.push({
                             id: i,
@@ -25,6 +27,7 @@ const FulfilledCampaigns = () => {
                     }
                 }
 
+                console.log("Fulfilled Campaigns:", fetchedCampaigns);
                 setCampaigns(fetchedCampaigns);
             } catch (error) {
                 console.error("Error fetching fulfilled campaigns:", error);
@@ -33,18 +36,18 @@ const FulfilledCampaigns = () => {
         };
 
         fetchFulfilledCampaigns();
+
+        contract.events.CampaignFulfilled({}, async () => {
+            console.log("🔄 Event detected: CampaignFulfilled");
+            fetchFulfilledCampaigns();
+        });
+
     }, []);
 
     return (
-        <Paper elevation={3} sx={{ padding: "20px", marginBottom: "20px" }}>
+        <Paper elevation={3} sx={{ padding: "20px", marginBlock: "20px" }}>
             <Typography variant="h6">Fulfilled campaigns</Typography>
-            {loading ? (
-                <CircularProgress sx={{ marginTop: "20px" }} />
-            ) : campaigns.length === 0 ? (
-                <Typography variant="body1" sx={{ marginTop: "10px" }}>
-                    No fulfilled campaigns.
-                </Typography>
-            ) : (
+            {loading ? <CircularProgress sx={{ marginTop: "20px" }} /> : (
                 <TableContainer>
                     <Table>
                         <TableHead>
@@ -55,11 +58,11 @@ const FulfilledCampaigns = () => {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {campaigns.map((campaign) => (
-                                <TableRow key={campaign.id}>
-                                    <TableCell>{campaign.creator}</TableCell>
-                                    <TableCell>{campaign.title}</TableCell>
-                                    <TableCell>{campaign.fundsRaised}</TableCell>
+                            {campaigns.map(c => (
+                                <TableRow key={c.id}>
+                                    <TableCell>{c.creator}</TableCell>
+                                    <TableCell>{c.title}</TableCell>
+                                    <TableCell>{c.fundsRaised}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>

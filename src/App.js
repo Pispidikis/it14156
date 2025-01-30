@@ -4,14 +4,14 @@ import "./App.css";
 import Header from "./components/Header";
 import NewCampaign from "./components/NewCampaign";
 import LiveCampaigns from "./components/LiveCampaigns";
-import BuyShares from "./components/BuyShares";
-import CompleteCampaign from "./components/CompleteCampaign";
-import CancelCampaign from "./components/CancelCampaign";
-import ClaimRefund from "./components/ClaimRefund";
 import FulfilledCampaigns from "./components/FulfilledCampaigns";
 import CanceledCampaigns from "./components/CanceledCampaigns";
 import AdminPanel from "./components/AdminPanel";
 
+import BuyShares from "./components/BuyShares";
+import CompleteCampaign from "./components/CompleteCampaign";
+import CancelCampaign from "./components/CancelCampaign";
+import ClaimRefund from "./components/ClaimRefund";
 const App = () => {
   return (
       <div>
@@ -27,10 +27,6 @@ const App = () => {
             <Header />
             <NewCampaign />
             <LiveCampaigns />
-            <BuyShares />
-            <CompleteCampaign />
-            <CancelCampaign />
-            <ClaimRefund />
             <FulfilledCampaigns />
             <CanceledCampaigns />
             <AdminPanel />

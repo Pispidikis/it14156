@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Button } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, CircularProgress, Button, Box } from "@mui/material";
 import web3 from "../utils/web3";
 import contract from "../utils/contract";
 
 const LiveCampaigns = () => {
     const [campaigns, setCampaigns] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [userAddress, setUserAddress] = useState("");
 
     useEffect(() => {
         const fetchCampaigns = async () => {
             try {
+                const accounts = await web3.eth.getAccounts();
+                setUserAddress(accounts[0]);
+
                 const campaignCount = await contract.methods.campaignCount().call();
                 const fetchedCampaigns = [];
 
@@ -35,17 +39,63 @@ const LiveCampaigns = () => {
         };
 
         fetchCampaigns();
+
+        // 🔄 Live ενημέρωση από το blockchain μέσω events
+        contract.events.CampaignFulfilled({}, async () => {
+            console.log("🔄 Event detected: CampaignFulfilled");
+            fetchCampaigns();
+        });
+
     }, []);
 
+    const handlePledge = async (campaignId, costPerShare) => {
+        try {
+            await contract.methods.buyShare(campaignId).send({
+                from: userAddress,
+                value: web3.utils.toWei(costPerShare, "ether"),
+                gas: 300000,
+            });
+            console.log(`✅ Pledged to campaign ${campaignId}`);
+        } catch (error) {
+            console.error("Error pledging:", error);
+        }
+    };
+
+    const handleCancel = async (campaignId, creator) => {
+        try {
+            if (userAddress.toLowerCase() !== creator.toLowerCase()) {
+                alert("❌ You are not the creator of this campaign!");
+                return;
+            }
+
+            await contract.methods.cancelCampaign(campaignId).send({ from: userAddress, gas: 300000 });
+            console.log(`✅ Campaign ${campaignId} canceled.`);
+        } catch (error) {
+            console.error("Error canceling campaign:", error);
+        }
+    };
+
+    const handleFulfill = async (campaignId, creator) => {
+        try {
+            if (userAddress.toLowerCase() !== creator.toLowerCase()) {
+                alert("❌ You are not the creator of this campaign!");
+                return;
+            }
+
+            await contract.methods.completeCampaign(campaignId).send({ from: userAddress, gas: 300000 });
+            console.log(`✅ Campaign ${campaignId} fulfilled successfully!`);
+        } catch (error) {
+            console.error("Error fulfilling campaign:", error);
+        }
+    };
+
     return (
-        <Paper elevation={3} sx={{ padding: "20px", marginBottom: "20px" }}>
+        <Paper elevation={3} sx={{ padding: "20px", marginBottom: "20px", margin: "auto" }}>
             <Typography variant="h6">Live campaigns</Typography>
             {loading ? (
                 <CircularProgress sx={{ marginTop: "20px" }} />
             ) : campaigns.length === 0 ? (
-                <Typography variant="body1" sx={{ marginTop: "10px" }}>
-                    No active campaigns.
-                </Typography>
+                <Typography variant="body1" sx={{ marginTop: "10px" }}>No active campaigns.</Typography>
             ) : (
                 <TableContainer>
                     <Table>
@@ -53,7 +103,7 @@ const LiveCampaigns = () => {
                             <TableRow>
                                 <TableCell><b>Entrepreneur</b></TableCell>
                                 <TableCell><b>Title</b></TableCell>
-                                <TableCell><b>Price / Backers / Pledges left / Your Pledges</b></TableCell>
+                                <TableCell><b>Price / Backers / Pledges left</b></TableCell>
                                 <TableCell><b>Actions</b></TableCell>
                             </TableRow>
                         </TableHead>
@@ -62,11 +112,17 @@ const LiveCampaigns = () => {
                                 <TableRow key={campaign.id}>
                                     <TableCell>{campaign.creator}</TableCell>
                                     <TableCell>{campaign.title}</TableCell>
-                                    <TableCell>{campaign.costPerShare} | {campaign.totalShares} | {campaign.totalShares - campaign.soldShares} | 0</TableCell>
+                                    <TableCell>{campaign.costPerShare} | {campaign.totalShares} | {campaign.totalShares - campaign.soldShares}</TableCell>
                                     <TableCell>
-                                        <Button variant="contained" color="success">Pledge</Button>
-                                        <Button variant="contained" color="error" sx={{ marginLeft: "10px" }}>Cancel</Button>
-                                        <Button variant="contained" disabled sx={{ marginLeft: "10px" }}>Fulfill</Button>
+                                        <Box display="flex" justifyContent="center" gap={1}>
+                                            <Button variant="contained" color="success" onClick={() => handlePledge(campaign.id, campaign.costPerShare)}>Pledge</Button>
+                                            {userAddress.toLowerCase() === campaign.creator.toLowerCase() && (
+                                                <Button variant="contained" color="error" onClick={() => handleCancel(campaign.id, campaign.creator)}>Cancel</Button>
+                                            )}
+                                            {userAddress.toLowerCase() === campaign.creator.toLowerCase() && campaign.totalShares === campaign.soldShares && (
+                                                <Button variant="contained" color="primary" onClick={() => handleFulfill(campaign.id, campaign.creator)}>Fulfill</Button>
+                                            )}
+                                        </Box>
                                     </TableCell>
                                 </TableRow>
                             ))}
