@@ -38,7 +38,7 @@ const FulfilledCampaigns = () => {
         fetchFulfilledCampaigns();
 
         contract.events.CampaignFulfilled({}, async () => {
-            console.log("🔄 Event detected: CampaignFulfilled");
+            console.log("Event detected: CampaignFulfilled");
             fetchFulfilledCampaigns();
         });
 

@@ -1,9 +1,9 @@
 import web3 from "./web3";
 
-// Αντικατέστησε με τη δική σου διεύθυνση του συμβολαίου από το Remix
+
 const contractAddress = "0xCD85b43ae2f8dE311c1c70C89d4C851D43248A3B";
 
-// Αντικατέστησε με το ABI που αντέγραψες από το Remix
+
 const contractABI = [
     {
         "inputs": [],

@@ -16,14 +16,14 @@ const CancelCampaign = () => {
         try {
             const accounts = await web3.eth.getAccounts();
 
-            // Κλήση της μεθόδου cancelCampaign από το συμβόλαιο
+
             await contract.methods.cancelCampaign(campaignId).send({
                 from: accounts[0],
             });
 
-            setMessage("✅ Η καμπάνια ακυρώθηκε επιτυχώς!");
+            setMessage("Η καμπάνια ακυρώθηκε επιτυχώς!");
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την ακύρωση της καμπάνιας.");
+            setMessage("Σφάλμα κατά την ακύρωση της καμπάνιας.");
             console.error(error);
         }
 

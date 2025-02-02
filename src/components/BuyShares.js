@@ -17,11 +17,10 @@ const BuyShares = () => {
         try {
             const accounts = await web3.eth.getAccounts();
 
-            // Ανάκτηση στοιχείων καμπάνιας
+
             const campaign = await contract.methods.campaigns(campaignId).call();
             const costPerShareWei = campaign.costPerShare;
 
-            // Υπολογισμός συνολικού κόστους σε Wei
             const totalCostWei = web3.utils.toBN(costPerShareWei).mul(web3.utils.toBN(shares));
 
             // Αγορά μετοχών
@@ -30,9 +29,9 @@ const BuyShares = () => {
                 value: totalCostWei.toString(),
             });
 
-            setMessage("✅ Η αγορά ολοκληρώθηκε επιτυχώς!");
+            setMessage("Η αγορά ολοκληρώθηκε επιτυχώς!");
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την αγορά μετοχών.");
+            setMessage("Σφάλμα κατά την αγορά μετοχών.");
             console.error(error);
         }
 

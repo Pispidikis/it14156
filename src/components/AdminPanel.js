@@ -15,9 +15,9 @@ const AdminPanel = () => {
         try {
             const accounts = await web3.eth.getAccounts();
             await contract.methods.withdrawFees().send({ from: accounts[0] });
-            setMessage("✅ Τα fees αποσύρθηκαν επιτυχώς!");
+            setMessage("Τα fees αποσύρθηκαν επιτυχώς!");
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την απόσυρση των fees.");
+            setMessage("Σφάλμα κατά την απόσυρση των fees.");
             console.error(error);
         }
         setLoading(false);
@@ -29,9 +29,9 @@ const AdminPanel = () => {
         try {
             const accounts = await web3.eth.getAccounts();
             await contract.methods.changeOwner(newOwner).send({ from: accounts[0] });
-            setMessage(`✅ Η ιδιοκτησία μεταφέρθηκε στη διεύθυνση ${newOwner}`);
+            setMessage(`Η ιδιοκτησία μεταφέρθηκε στη διεύθυνση ${newOwner}`);
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την αλλαγή ιδιοκτησίας.");
+            setMessage("Σφάλμα κατά την αλλαγή ιδιοκτησίας.");
             console.error(error);
         }
         setLoading(false);
@@ -43,9 +43,9 @@ const AdminPanel = () => {
         try {
             const accounts = await web3.eth.getAccounts();
             await contract.methods.banEntrepreneur(banAddress).send({ from: accounts[0] });
-            setMessage(`✅ Ο επιχειρηματίας με διεύθυνση ${banAddress} απαγορεύτηκε.`);
+            setMessage(`Ο επιχειρηματίας με διεύθυνση ${banAddress} απαγορεύτηκε.`);
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την απαγόρευση επιχειρηματία.");
+            setMessage("Σφάλμα κατά την απαγόρευση επιχειρηματία.");
             console.error(error);
         }
         setLoading(false);
@@ -57,9 +57,9 @@ const AdminPanel = () => {
         try {
             const accounts = await web3.eth.getAccounts();
             await contract.methods.destroy().send({ from: accounts[0] });
-            setMessage("✅ Το συμβόλαιο καταστράφηκε επιτυχώς!");
+            setMessage("Το συμβόλαιο καταστράφηκε επιτυχώς!");
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την καταστροφή του συμβολαίου.");
+            setMessage("Σφάλμα κατά την καταστροφή του συμβολαίου.");
             console.error(error);
         }
         setLoading(false);

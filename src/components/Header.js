@@ -19,16 +19,16 @@ const Header = () => {
                 const contractOwner = await contract.methods.owner().call();
                 setOwner(contractOwner);
 
-                // 🔄 Υπόλοιπο συμβολαίου
+
                 const contractAddress = contract.options.address;
                 const contractBal = await web3.eth.getBalance(contractAddress);
                 setContractBalance(web3.utils.fromWei(contractBal, "ether"));
 
-                // 🔄 Fees που έχουν συλλεχθεί
+
                 const collectedFees = await contract.methods.feesCollected().call();
                 setFees(web3.utils.fromWei(collectedFees, "ether"));
 
-                // 🔄 Υπόλοιπο χρήστη στο Metamask
+
                 const userBal = await web3.eth.getBalance(accounts[0]);
                 setUserBalance(web3.utils.fromWei(userBal, "ether"));
 
@@ -39,19 +39,18 @@ const Header = () => {
 
         fetchData();
 
-        // 🔄 Live ενημέρωση αν αλλάξει κάτι στο contract
+
         const eventListener = contract.events.allEvents({}, async (error, event) => {
             if (error) {
                 console.error("Error listening to contract events:", error);
                 return;
             }
-            console.log("🔄 Event detected in Header:", event);
+            console.log("Event detected in Header:", event);
 
-            // Κάθε φορά που γίνεται μια συναλλαγή, ανανεώνουμε τα δεδομένα
+
             fetchData();
         });
 
-        // 🚀 Cleanup function για να μη δημιουργούμε πολλαπλούς listeners
         return () => {
             eventListener.unsubscribe();
         };

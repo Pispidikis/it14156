@@ -51,10 +51,9 @@ const CanceledCampaigns = () => {
 
             console.log(`✅ Refund claimed for campaign ${campaignId}`);
 
-            // Μετά το Claim, ξαναφορτώνουμε τις ακυρωμένες καμπάνιες
             const updatedCampaigns = campaigns.map(c => {
                 if (c.id === campaignId) {
-                    return { ...c, userInvestment: 0 }; // Μηδενίζουμε την επένδυση
+                    return { ...c, userInvestment: 0 };
                 }
                 return c;
             });

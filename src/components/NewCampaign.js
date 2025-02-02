@@ -24,9 +24,9 @@ const NewCampaign = () => {
                 value: web3.utils.toWei("0.02", "ether"),
             });
 
-            setMessage("✅ Η καμπάνια δημιουργήθηκε επιτυχώς!");
+            setMessage("Η καμπάνια δημιουργήθηκε επιτυχώς!");
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά τη δημιουργία της καμπάνιας.");
+            setMessage("Σφάλμα κατά τη δημιουργία της καμπάνιας.");
             console.error(error);
         }
 

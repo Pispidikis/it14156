@@ -40,9 +40,9 @@ const LiveCampaigns = () => {
 
         fetchCampaigns();
 
-        // 🔄 Live ενημέρωση από το blockchain μέσω events
+
         contract.events.CampaignFulfilled({}, async () => {
-            console.log("🔄 Event detected: CampaignFulfilled");
+            console.log("Event detected: CampaignFulfilled");
             fetchCampaigns();
         });
 
@@ -55,7 +55,7 @@ const LiveCampaigns = () => {
                 value: web3.utils.toWei(costPerShare, "ether"),
                 gas: 300000,
             });
-            console.log(`✅ Pledged to campaign ${campaignId}`);
+            console.log(`Pledged to campaign ${campaignId}`);
         } catch (error) {
             console.error("Error pledging:", error);
         }
@@ -64,12 +64,12 @@ const LiveCampaigns = () => {
     const handleCancel = async (campaignId, creator) => {
         try {
             if (userAddress.toLowerCase() !== creator.toLowerCase()) {
-                alert("❌ You are not the creator of this campaign!");
+                alert("You are not the creator of this campaign!");
                 return;
             }
 
             await contract.methods.cancelCampaign(campaignId).send({ from: userAddress, gas: 300000 });
-            console.log(`✅ Campaign ${campaignId} canceled.`);
+            console.log(`Campaign ${campaignId} canceled.`);
         } catch (error) {
             console.error("Error canceling campaign:", error);
         }
@@ -78,12 +78,12 @@ const LiveCampaigns = () => {
     const handleFulfill = async (campaignId, creator) => {
         try {
             if (userAddress.toLowerCase() !== creator.toLowerCase()) {
-                alert("❌ You are not the creator of this campaign!");
+                alert("You are not the creator of this campaign!");
                 return;
             }
 
             await contract.methods.completeCampaign(campaignId).send({ from: userAddress, gas: 300000 });
-            console.log(`✅ Campaign ${campaignId} fulfilled successfully!`);
+            console.log(`Campaign ${campaignId} fulfilled successfully!`);
         } catch (error) {
             console.error("Error fulfilling campaign:", error);
         }

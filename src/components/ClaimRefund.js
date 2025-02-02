@@ -21,9 +21,9 @@ const ClaimRefund = () => {
                 from: accounts[0],
             });
 
-            setMessage("✅ Η επιστροφή χρημάτων ολοκληρώθηκε επιτυχώς!");
+            setMessage("Η επιστροφή χρημάτων ολοκληρώθηκε επιτυχώς!");
         } catch (error) {
-            setMessage("❌ Σφάλμα κατά την επιστροφή χρημάτων.");
+            setMessage("Σφάλμα κατά την επιστροφή χρημάτων.");
             console.error(error);
         }
 
